@@ -20,5 +20,6 @@
     <item
         android:id="@+id/action_delete_all_transactions"
         android:title="Delete all transactions"
-        app:showAsAction="never"/>
+        app:showAsAction="never"
+          />
 </menu>
