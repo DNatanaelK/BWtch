@@ -17,7 +17,7 @@ import java.util.List;
  */
 class DBHelper extends SQLiteOpenHelper
 {
-    private static final String DATABASE_NAME = "BudgetWatch.db";
+    public static final String DATABASE_NAME = "BudgetWatch.db";
 
     public static final int ORIGINAL_DATABASE_VERSION = 1;
     public static final int DATABASE_VERSION = 2;
@@ -76,7 +76,7 @@ class DBHelper extends SQLiteOpenHelper
                 "create table  " + BudgetDbIds.TABLE + "(" +
                         BudgetDbIds.NAME + " text primary key," +
                         BudgetDbIds.MAX + " INTEGER not null)");
-        // create table for transactions
+       // create table for transactions
         db.execSQL("create table " + TransactionDbIds.TABLE + "(" +
                 TransactionDbIds.NAME + " INTEGER primary key autoincrement," +
                 TransactionDbIds.TYPE + " INTEGER not null," +
@@ -96,7 +96,7 @@ class DBHelper extends SQLiteOpenHelper
         if(oldVersion < 2 && newVersion >= 2)
         {
             db.execSQL("ALTER TABLE " + TransactionDbIds.TABLE
-                    + " ADD COLUMN " + TransactionDbIds.RECEIPT + " TEXT");
+                + " ADD COLUMN " + TransactionDbIds.RECEIPT + " TEXT");
         }
     }
 
@@ -246,28 +246,28 @@ class DBHelper extends SQLiteOpenHelper
         final String TRANS_BUDGET = TransactionDbIds.TABLE + "." + TransactionDbIds.BUDGET;
 
         Cursor data = db.rawQuery("select " + BUDGET_ID + ", " + BUDGET_MAX + ", " +
-                        "(select total(" + TRANS_VALUE + ") from " + TransactionDbIds.TABLE + " where " +
-                        BUDGET_ID + " = " + TRANS_BUDGET + " and " +
-                        TRANS_TYPE + " = ? and " +
-                        TRANS_DATE + " >= ? and " +
-                        TRANS_DATE + " <= ?) " +
-                        "as " + TOTAL_EXPENSE_COL + ", " +
-                        "(select total(" + TRANS_VALUE + ") from " + TransactionDbIds.TABLE + " where " +
-                        BUDGET_ID + " = " + TRANS_BUDGET + " and " +
-                        TRANS_TYPE + " = ? and " +
-                        TRANS_DATE + " >= ? and " +
-                        TRANS_DATE + " <= ?) " +
-                        "as " + TOTAL_REVENUE_COL + " " +
-                        "from " + BudgetDbIds.TABLE + " order by " + BUDGET_ID,
+                "(select total(" + TRANS_VALUE + ") from " + TransactionDbIds.TABLE + " where " +
+                    BUDGET_ID + " = " + TRANS_BUDGET + " and " +
+                    TRANS_TYPE + " = ? and " +
+                    TRANS_DATE + " >= ? and " +
+                    TRANS_DATE + " <= ?) " +
+                    "as " + TOTAL_EXPENSE_COL + ", " +
+                "(select total(" + TRANS_VALUE + ") from " + TransactionDbIds.TABLE + " where " +
+                    BUDGET_ID + " = " + TRANS_BUDGET + " and " +
+                    TRANS_TYPE + " = ? and " +
+                    TRANS_DATE + " >= ? and " +
+                    TRANS_DATE + " <= ?) " +
+                    "as " + TOTAL_REVENUE_COL + " " +
+                "from " + BudgetDbIds.TABLE + " order by " + BUDGET_ID,
                 new String[]
-                        {
-                                Integer.toString(TransactionDbIds.EXPENSE),
-                                Long.toString(startDateMs),
-                                Long.toString(endDateMs),
-                                Integer.toString(TransactionDbIds.REVENUE),
-                                Long.toString(startDateMs),
-                                Long.toString(endDateMs)
-                        });
+                    {
+                        Integer.toString(TransactionDbIds.EXPENSE),
+                        Long.toString(startDateMs),
+                        Long.toString(endDateMs),
+                        Integer.toString(TransactionDbIds.REVENUE),
+                        Long.toString(startDateMs),
+                        Long.toString(endDateMs)
+                    });
 
         LinkedList<Budget> budgets = new LinkedList<>();
 
@@ -423,7 +423,7 @@ class DBHelper extends SQLiteOpenHelper
      * false otherwise
      */
     public boolean insertTransaction(final int type, final String description, final String account, final String budget,
-                                     final double value, final String note, final long dateInMs, final String receipt)
+                                 final double value, final String note, final long dateInMs, final String receipt)
     {
         ContentValues contentValues = new ContentValues();
         contentValues.put(TransactionDbIds.TYPE, type);
@@ -705,9 +705,15 @@ class DBHelper extends SQLiteOpenHelper
 
         SQLiteDatabase db = getReadableDatabase();
         Cursor res =  db.rawQuery("select * from " + TransactionDbIds.TABLE + " where " +
-                        " LENGTH(" + TransactionDbIds.RECEIPT + ") > 0 " +
-                        (endDate != null ? " AND " + TransactionDbIds.DATE + "<=? " : ""),
+                " LENGTH(" + TransactionDbIds.RECEIPT + ") > 0 " +
+                (endDate != null ? " AND " + TransactionDbIds.DATE + "<=? " : ""),
                 args);
         return res;
+    }
+    public void deleteAllTransactions()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TransactionDbIds.TABLE,null,null);
+        db.close();
     }
 }
