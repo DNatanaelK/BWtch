@@ -31,7 +31,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -48,12 +47,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.UUID;
 
 public class TransactionViewActivity extends AppCompatActivity
@@ -65,20 +61,16 @@ public class TransactionViewActivity extends AppCompatActivity
     static final String ACTION_NEW_EXPENSE = "ActionAddExpense";
     static final String ACTION_NEW_REVENUE = "ActionAddRevenue";
 
-    static final String PREFS_SEARCH_HISTORY = "NameHistory";
-    private SharedPreferences prefs;
-    private Set<String> history;
-
     private String capturedUncommittedReceipt = null;
     private DBHelper _db;
 
-    private AutoCompleteTextView _nameEdit;
+    private EditText _nameEdit;
     private TextView _nameView;
-    private AutoCompleteTextView _accountEdit;
+    private EditText _accountEdit;
     private TextView _accountView;
-    private AutoCompleteTextView _valueEdit;
+    private EditText _valueEdit;
     private TextView _valueView;
-    private AutoCompleteTextView _noteEdit;
+    private EditText _noteEdit;
     private TextView _noteView;
     private TextView _budgetView;
     private TextView _dateView;
@@ -135,28 +127,6 @@ public class TransactionViewActivity extends AppCompatActivity
         }
     }
 
-    private void setAutoCompleteFromHistory()
-    {
-        AutoCompleteTextView textView = (AutoCompleteTextView) findViewById(R.id.nameEdit);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_list_item_1, history.toArray(new String[history.size()]));
-        textView.setAdapter(adapter);
-        textView.setThreshold(1);
-    }
-    private void addPreviousEntry(String input) {
-        if (!history.contains(input)) {
-            history.add(input);
-        }
-    }
-    private void savePreferences()
-    {
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putStringSet(PREFS_SEARCH_HISTORY, history);
-        editor.apply();
-        editor.commit();
-    }
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -173,13 +143,13 @@ public class TransactionViewActivity extends AppCompatActivity
 
         _db = new DBHelper(this);
 
-        _nameEdit = (AutoCompleteTextView) findViewById(R.id.nameEdit);
+        _nameEdit = (EditText) findViewById(R.id.nameEdit);
         _nameView = (TextView) findViewById(R.id.nameView);
-        _accountEdit = (AutoCompleteTextView) findViewById(R.id.accountEdit);
+        _accountEdit = (EditText) findViewById(R.id.accountEdit);
         _accountView = (TextView) findViewById(R.id.accountView);
-        _valueEdit = (AutoCompleteTextView) findViewById(R.id.valueEdit);
+        _valueEdit = (EditText) findViewById(R.id.valueEdit);
         _valueView = (TextView) findViewById(R.id.valueView);
-        _noteEdit = (AutoCompleteTextView) findViewById(R.id.noteEdit);
+        _noteEdit = (EditText) findViewById(R.id.noteEdit);
         _noteView = (TextView) findViewById(R.id.noteView);
         _budgetView = (TextView) findViewById(R.id.budgetView);
         _dateView = (TextView) findViewById(R.id.dateView);
@@ -193,10 +163,6 @@ public class TransactionViewActivity extends AppCompatActivity
         _hasReceiptButtonLayout = findViewById(R.id.hasReceiptButtonLayout);
         _dateEdit = (EditText) findViewById(R.id.dateEdit);
         _budgetSpinner = (Spinner) findViewById(R.id.budgetSpinner);
-
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        history = prefs.getStringSet(PREFS_SEARCH_HISTORY, new HashSet<String>());
-        setAutoCompleteFromHistory();
 
         extractIntentFields(getIntent());
     }
@@ -509,9 +475,6 @@ public class TransactionViewActivity extends AppCompatActivity
                     value, note, dateMs, receipt);
         }
 
-        addPreviousEntry(name);
-        savePreferences();
-
         finish();
     }
 
@@ -765,7 +728,7 @@ public class TransactionViewActivity extends AppCompatActivity
 
         if(requestCode == REQUEST_IMAGE_CAPTURE)
         {
-            prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
             String jpegQualityLevelStr = prefs.getString("jpegQuality", "");
             int jpegQualityLevel = 40; // default value
