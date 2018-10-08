@@ -30,6 +30,7 @@ public class BudgetActivity extends AppCompatActivity
     private final static String TAG = "BudgetWatch";
 
     private DBHelper _db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -147,27 +148,7 @@ public class BudgetActivity extends AppCompatActivity
 
         String fraction = String.format(getResources().getString(R.string.fraction), current, max);
         budgetValue.setText(fraction);
-
-        if( current > max){
-            alertDialog();
-        }
     }
-    public void alertDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(BudgetActivity.this);
-        builder.setTitle("Warning!");
-        builder.setMessage("Reminder: Total Budget is over the limit!");
-        builder.setCancelable(false);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        AlertDialog aDialog = builder.create();
-        aDialog.show();
-    }
-
-
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
