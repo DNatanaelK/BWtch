@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
@@ -21,15 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 
-
-
 public class TransactionActivity extends AppCompatActivity
 {
     private TransactionDatabaseChangedReceiver _dbChanged;
     private static final String TAG = "BudgetWatch";
-
-    private DBHelper _db;
-    private int _transactionId;
 
     private boolean _currentlySearching = false;
 
@@ -111,7 +105,6 @@ public class TransactionActivity extends AppCompatActivity
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -122,8 +115,6 @@ public class TransactionActivity extends AppCompatActivity
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
-        _db = new DBHelper(this);
 
         searchView.setOnCloseListener(new SearchView.OnCloseListener()
         {
@@ -202,10 +193,6 @@ public class TransactionActivity extends AppCompatActivity
             builder.show();
             return true;
         }
-        if(id == R.id.action_delete_all_transactions){
-            _db.deleteAllTransactions();
-        }
-
 
         if(id == android.R.id.home)
         {
